@@ -3,10 +3,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(models.Model):
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=80, unique=True, null=False)
     password_hash = models.CharField(max_length=120)
     admin = models.BooleanField()
+
+    def __str__(self):
+        return self.name
 
     def __repr__(self):
         return '<User %r' % self.name
@@ -33,7 +35,6 @@ class User(models.Model):
 
 
 class Group(models.Model):
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=80, unique=True, null=False)
     user = models.ManyToManyField(User, blank=True)
 
@@ -43,13 +44,12 @@ class Group(models.Model):
     @property
     def serialized(self):
         return {
-            'id': self.id,
             'name': self.name,
             'users': [
                 {
                     'id': user.id,
-                    'name': user.name,
+                    'name': user.name
                 }
-            for user in self.user
+                for user in self.user
             ]
         }
